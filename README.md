@@ -1,3 +1,5 @@
+**English** · [Русский](README.ru.md)
+
 # Stepansky Telegram Build Pro Skill
 
 *The tool, its directory and every path inside it are `telegram-stack` — that is what
@@ -115,6 +117,10 @@ by an exit code.
 **5. Total stitching.** Bot and Mini App share `services/`, `navigation.yaml`, `copy.yaml`, `tokens.yaml` and one user identity, so they cannot disagree. Both are thin adapters over one core. And an action finished in the app must leave a message in the chat — users treat the chat as the record of what happened.
 
 ---
+
+A far more detailed walkthrough — what it solves and how, when to use it, when **not** to,
+what it explicitly does not do, and a file-by-file breakdown — is in
+[README.ru.md](README.ru.md) (Russian).
 
 ## Provenance and honesty
 
