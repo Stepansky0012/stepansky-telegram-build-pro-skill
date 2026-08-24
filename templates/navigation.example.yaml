@@ -1,0 +1,141 @@
+# Navigation Contract — the single source of truth for the bot's interface.
+# Validate:  python scripts/gen_navigation.py navigation.yaml --check
+# Generate:  python scripts/gen_navigation.py navigation.yaml --out app/nav --diagram nav.mmd
+#
+# Derived by the JSA procedure in skills/telegram-ux/SKILL.md. Every screen names
+# the business jobs it serves; a job with no screen is a requirement with no interface.
+
+version: v1
+bot: repair-bot
+default_response_mode: plain
+max_arg_bytes: 16          # callback budget is checked at this arg length
+
+jobs:
+  J1: submit a repair request -> request exists, user has a number
+  J2: check status of my request -> user knows the phase
+  J4: pay for expedited handling -> paid, request flagged urgent
+  J5: browse the price list -> user found the relevant price
+  J6: share a price with a colleague -> colleague sees it in their chat
+  J7: cancel a request -> request cancelled, irreversible
+  J8: (staff) take a request into work -> assignee set, user notified
+
+screens:
+
+  # ---- root -----------------------------------------------------------------
+  - id: home
+    ns: home
+    title: "Главное меню"
+    surface: reply_keyboard          # top constant jobs only, <=4 buttons
+    jobs: []
+    entry: ["/start", "/home"]
+    escape: none                     # allowed on roots only
+    actions:
+      - {label: "Новая заявка", to: req_new}
+      - {label: "Мои заявки",   to: req_list}
+      - {label: "Прайс",        to: price}
+      - {label: "Помощь",       to: help}
+
+  # ---- J1: form with <=5 fields -> FSM wizard --------------------------------
+  - id: req_new
+    ns: reqnew
+    title: "Новая заявка"
+    surface: fsm
+    jobs: [J1]
+    entry: [home, "/newrequest"]
+    escape: home
+    state: NewRequest
+    steps:
+      - {id: category, prompt: "Что случилось?", input: one_of_few, options_from: categories}
+      - {id: address,  prompt: "Адрес?",          input: text, validate: "min_len:5"}
+      - {id: photo,    prompt: "Фото, если есть", input: media, optional: true}
+    on_complete: {to: req_card, response_mode: edit}
+
+  # ---- J2: one-of-many -> paginated list ------------------------------------
+  - id: req_list
+    ns: reqs
+    title: "Мои заявки"
+    surface: inline_paginated
+    jobs: [J2]
+    entry: [home, "/myrequests"]
+    escape: home
+    page_size: 5
+    item_action: {to: req_card, arg: request_id}
+
+  - id: req_card
+    ns: req
+    title: "Заявка"
+    surface: inline
+    jobs: [J2, J7]
+    entry: [req_list, req_new, "start=req"]
+    escape: back
+    actions:
+      - {label: "Ускорить",  to: pay_urgent, icon: star}
+      - {label: "Отменить",  to: req_cancel, destructive: true}
+
+  # ---- J7: destructive -> mandatory confirm (may sit at depth 3) ------------
+  - id: req_cancel
+    ns: reqcancel
+    title: "Отмена заявки"
+    surface: inline
+    jobs: [J7]
+    entry: [req_card]
+    escape: back
+    confirm: true
+    confirm_object: "заявку"
+    actions:
+      - {label: "Да, отменить", to: req_card, action: docancel}
+
+  # ---- J4: money ------------------------------------------------------------
+  - id: pay_urgent
+    ns: pay
+    title: "Ускорить заявку"
+    surface: inline
+    jobs: [J4]
+    entry: [req_card]
+    escape: back
+    actions:
+      - {label: "Оплатить", to: req_card, action: invoice, icon: done}
+
+  # ---- J5: dataset -> Mini App ---------------------------------------------
+  - id: price
+    ns: price
+    title: "Прайс"
+    surface: miniapp
+    jobs: [J5]
+    entry: [home, "startapp=price"]
+    app_route: /price
+    escape: home
+    actions:
+      - {label: "Открыть прайс", web_app: "/price"}
+
+  # ---- J6: cross-chat -> inline mode ---------------------------------------
+  - id: price_share
+    ns: pshare
+    title: "Отправить прайс"
+    surface: inline_mode
+    jobs: [J6]
+    entry: [price]
+    escape: back
+    actions:
+      - {label: "Выбрать чат", switch_inline: "price "}
+
+  # ---- J8: staff action inside a group -> ephemeral -------------------------
+  - id: staff_take
+    ns: staff
+    title: "Взять в работу"
+    surface: inline
+    jobs: [J8]
+    entry: ["/take"]
+    escape: none
+    actions:
+      - {label: "Взять", to: staff_take, action: take}
+
+  - id: help
+    ns: help
+    title: "Помощь"
+    surface: inline
+    jobs: []
+    entry: [home, "/help"]
+    escape: home
+    actions:
+      - {label: "Написать в поддержку", url: "https://t.me/support"}

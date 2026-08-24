@@ -1,0 +1,33 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mini App</title>
+
+<!-- viewport-fit=cover is what makes the safe-area insets non-zero. Without it
+     the padding in theme.css resolves to 0 and content sits under the notch. -->
+
+<!-- Telegram runtime. Loaded from telegram.org: this is the one external script
+     a Mini App is expected to have. -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<link rel="stylesheet" href="/src/theme.css" />
+
+<!-- Paint the theme background before any JS runs, so there is no white flash
+     between the app opening and ready() being called. -->
+<style>
+  html { background: var(--bg); }
+  #boot { padding: var(--space-4) 0; display: grid; gap: var(--space-3); }
+  #boot .skeleton:nth-child(1) { height: 28px; width: 60%; }
+  #boot .skeleton:nth-child(2) { height: 72px; }
+  #boot .skeleton:nth-child(3) { height: 72px; }
+</style>
+
+<div id="root">
+  <!-- Skeleton, not a spinner: structure first, data second. -->
+  <div id="boot">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+</div>
+
+<script type="module" src="/src/main.tsx"></script>

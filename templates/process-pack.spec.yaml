@@ -1,0 +1,82 @@
+# Process Pack — the bot's animated icon system as a custom emoji set.
+# Nine glyphs usable in three places: inside message text (entities), as keyboard
+# button icons (icon_custom_emoji_id, API 9.4+), and as the Presence Protocol anchor.
+#
+#   python scripts/make_process_assets.py --out assets/process-emoji
+#   python scripts/validate_sticker_assets.py assets/process-emoji --kind custom_emoji
+#   python scripts/build_process_pack.py --spec templates/process-pack.spec.yaml \
+#       --assets assets/process-emoji --env prod --out app/nav/custom_emoji.py
+
+set:
+  slug: proc                      # final name: {slug}_{env}_by_{bot_username}
+  title: "{bot_title} · Process"
+  type: custom_emoji              # IMMUTABLE after creation
+  needs_repainting: true          # IMMUTABLE. Glyphs adopt the text colour -> theme-proof
+  owner_env: STICKER_OWNER_USER_ID
+  thumbnail_glyph: done
+
+# `fallback` must be unique per glyph: it is both the client-side fallback and
+# the key used to map ids back from getStickerSet. Its meaning must match the state.
+glyphs:
+  - key: received
+    state: RECEIVED
+    fallback: "👀"
+    keywords: [received, ack, seen]
+    asset: received.tgs
+    motion: "eye blink once, 1.5s, loop"
+
+  - key: queued
+    state: QUEUED
+    fallback: "⏳"
+    keywords: [queued, waiting, pending]
+    asset: queued.tgs
+    motion: "hourglass rotates 180°, 1.2s, continuous"
+
+  - key: studying
+    state: STUDYING
+    fallback: "🔎"
+    keywords: [studying, reading, search, analyzing]
+    asset: studying.tgs
+    motion: "magnifier sweeps left→right→centre, 1.4s, continuous"
+
+  - key: working
+    state: WORKING
+    fallback: "✍️"
+    keywords: [working, writing, processing]
+    asset: working.tgs
+    motion: "three dots cascade, 0.9s — deliberately echoes native typing"
+
+  - key: waiting_user
+    state: WAITING_USER
+    fallback: "✋"
+    keywords: [waiting, input, you]
+    asset: waiting_user.tgs
+    motion: "slow 2s pulse — calm, not urgent"
+
+  - key: waiting_human
+    state: WAITING_HUMAN
+    fallback: "🕐"
+    keywords: [review, moderation, human]
+    asset: waiting_human.tgs
+    motion: "clock hand one full sweep, 3.0s"
+
+  - key: done
+    state: DONE
+    fallback: "✅"
+    keywords: [done, ok, success]
+    asset: done.tgs
+    motion: "checkmark draws in 0.6s then holds — must NOT visibly loop"
+
+  - key: failed
+    state: FAILED
+    fallback: "⚠️"
+    keywords: [failed, error, problem]
+    asset: failed.tgs
+    motion: "single shake then hold"
+
+  - key: cancelled
+    state: CANCELLED
+    fallback: "🚫"
+    keywords: [cancelled, stopped, aborted]
+    asset: cancelled.tgs
+    motion: "static"

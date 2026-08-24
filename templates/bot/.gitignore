@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+# generated — rebuild, never commit prod ids
+app/nav/custom_emoji.py
+assets/process-emoji/.process-pack.lock.json

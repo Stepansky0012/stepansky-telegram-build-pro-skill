@@ -1,0 +1,8 @@
+{
+  "pinned_api": "10.2",
+  "code": ["app", "api"],
+  "contract": "navigation.yaml",
+  "assets": "assets/process-emoji",
+  "sticker_kind": "custom_emoji",
+  "styles": ["miniapp/src"]
+}
