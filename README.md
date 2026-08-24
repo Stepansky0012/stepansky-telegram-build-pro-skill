@@ -5,7 +5,7 @@
 
 An agent skill suite for building Telegram bots and Mini Apps that are **predictable** — for users, for the business, and for whoever is on call.
 
-Ten skills, nine executable gates, a code generator, a runnable bot skeleton, a Mini App skeleton, working animated emoji assets, and an eight-stage workflow. Pinned to **Bot API 10.2 (2026-07-14)**, with a version guard that tells you the moment that stops being true.
+Ten skills, ten executable gates, a navigation compiler, a runnable bot skeleton, a Mini App skeleton, working animated emoji assets, and an eight-stage workflow. Pinned to **Bot API 10.2 (2026-07-14)**, with a version guard that tells you the moment that stops being true.
 
 The design bet: **anything a script can enforce should not be left to prose.** Documentation persuades; a non-zero exit code decides. So each skill teaches the judgement calls, and `tg_preflight.py` refuses the rest.
 
