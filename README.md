@@ -1,8 +1,7 @@
-# Степанский телеграм билд про скил
+# Stepansky Telegram Build Pro Skill
 
-*Repository name: «Степанский телеграм билд про скил». The tool, its directory and
-every path inside it are `telegram-stack` — that is what `--stack-path`, `STACK_ROOT`
-and the generated adapters refer to.*
+*The tool, its directory and every path inside it are `telegram-stack` — that is what
+`--stack-path`, `STACK_ROOT` and the generated adapters refer to.*
 
 An agent skill suite for building Telegram bots and Mini Apps that are **predictable** — for users, for the business, and for whoever is on call.
 
